@@ -1,3 +1,9 @@
+# Crear carro
+POST http://localhost:8089/api/v1/carros
+
+# Agregar productos al carro
+http://localhost:8089/api/v1/carros/"ID CARRO"/productos/"ID PRODUCTO"
+
 # application.properties
 
 spring.application.name=carro-microservicio
