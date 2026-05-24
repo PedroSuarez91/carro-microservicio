@@ -9,7 +9,7 @@ JSON
 }
 
 # Agregar productos al carro
-http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
+POST http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
 
 # application.properties
 
