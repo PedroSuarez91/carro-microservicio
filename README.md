@@ -2,7 +2,7 @@
 POST http://localhost:8089/api/v1/carros
 
 # Agregar productos al carro
-http://localhost:8089/api/v1/carros/"ID CARRO"/productos/"ID PRODUCTO"
+http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
 
 # application.properties
 
