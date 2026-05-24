@@ -1,6 +1,13 @@
 # Crear carro
 POST http://localhost:8089/api/v1/carros
 
+JSON
+{
+  "total": 0,
+  "subtotal": 0,
+  "listaProductos": []
+}
+
 # Agregar productos al carro
 http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
 
