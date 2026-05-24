@@ -1,19 +1,25 @@
 package ecoMarket.carro_microservicio.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ecoMarket.carro_microservicio.model.Carro;
+import ecoMarket.carro_microservicio.model.ProductoDTO;
 import ecoMarket.carro_microservicio.repository.CarroRepository;
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
 public class CarroService {
+
     @Autowired
     private CarroRepository carroRepository;
+
+    @Autowired
+    private ProductoClientService productoClientService;
 
     public Carro save(Carro carro) {
         return carroRepository.save(carro);
@@ -24,26 +30,40 @@ public class CarroService {
     }
 
     public Carro findById(Long id) {
-        return carroRepository.findById(id).get();
+        return carroRepository.findById(id).orElse(null);
     }
 
     public void deleteById(Long id) {
         carroRepository.deleteById(id);
     }
 
-    /*public Carro modificar(Long id, Carro carro) {
+    public Carro agregarProductoAlCarro(Long idCarro, Long idProducto) {
 
-        Carro existente = carroRepository.findById(id).orElse(null);
+        Carro carro = carroRepository.findById(idCarro).orElse(null);
 
-        if (existente != null) {
-
-            existente.setTotal(carro.getTotal());
-            existente.setSubtotal(carro.getSubtotal());
-            existente.setListaProductos(carro.getListaProductos());
-
-            return carroRepository.save(existente);
+        if (carro == null) {
+            throw new RuntimeException("El carro no existe");
         }
 
-        return null;
-    }*/
+        ProductoDTO producto = productoClientService.obtenerProductoPorId(idProducto);
+
+        if (producto == null) {
+            throw new RuntimeException("El producto no existe");
+        }
+
+        if (producto.getStock_catalogo() <= 0) {
+            throw new RuntimeException("El producto no tiene stock disponible");
+        }
+
+        if (carro.getListaProductos() == null) {
+            carro.setListaProductos(new ArrayList<>());
+        }
+
+        carro.getListaProductos().add(producto.getId());
+
+        carro.setSubtotal(carro.getSubtotal() + producto.getPrecio());
+        carro.setTotal(carro.getSubtotal());
+
+        return carroRepository.save(carro);
+    }
 }

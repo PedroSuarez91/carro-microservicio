@@ -54,19 +54,19 @@ public class CarroController {
         return new ResponseEntity<>(buscado, HttpStatus.OK);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Carro> updateCarro(
-            @PathVariable Long id,
-            @RequestBody Carro carro) {
+    @PostMapping("/{idCarro}/productos/{idProducto}")
+    public ResponseEntity<Carro> agregarProductoAlCarro(
+        @PathVariable Long idCarro,
+        @PathVariable Long idProducto) {
 
-        Carro actualizado = carroService.modificar(id, carro);
-
-        if (actualizado == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    try {
+        Carro carroActualizado = carroService.agregarProductoAlCarro(idCarro, idProducto);
+        return new ResponseEntity<>(carroActualizado, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
 
-        return new ResponseEntity<>(actualizado, HttpStatus.OK);
-    }*/
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarro(@PathVariable Long id) {
