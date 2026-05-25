@@ -9,7 +9,10 @@ JSON
 }
 
 # Agregar productos al carro
-POST http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
+PUT http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
+
+# Eliminar productos del carro
+DELETE http://localhost:8089/api/v1/carros/"IDCARRO"/productos/"IDPRODUCTO"
 
 # application.properties
 
