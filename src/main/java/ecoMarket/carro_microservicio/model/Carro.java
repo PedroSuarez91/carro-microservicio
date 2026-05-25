@@ -1,6 +1,5 @@
 package ecoMarket.carro_microservicio.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CollectionTable;
@@ -29,16 +28,13 @@ public class Carro {
     private Long idCarro;
 
     @Column(nullable = false)
-    private int total = 0;
+    private int total;
 
     @Column(nullable = false)
-    private int subtotal = 0;
+    private int subtotal;
 
     @ElementCollection
-    @CollectionTable(
-        name = "carro_productos",
-        joinColumns = @JoinColumn(name = "id_carro")
-    )
+    @CollectionTable(name = "carro_productos", joinColumns = @JoinColumn(name = "id_carro"))
     @Column(name = "producto_id")
-    private List<Long> listaProductos = new ArrayList<>();
+    private List<Long> listaProductos;
 }

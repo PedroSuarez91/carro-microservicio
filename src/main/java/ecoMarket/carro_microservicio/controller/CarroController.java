@@ -13,6 +13,7 @@ import ecoMarket.carro_microservicio.service.CarroService;
 @RestController
 @RequestMapping("/api/v1/carros")
 public class CarroController {
+
     @Autowired
     private CarroService carroService;
 
@@ -54,20 +55,6 @@ public class CarroController {
         return new ResponseEntity<>(buscado, HttpStatus.OK);
     }
 
-    @PostMapping("/{idCarro}/productos/{idProducto}")
-    public ResponseEntity<Carro> agregarProductoAlCarro(
-        @PathVariable Long idCarro,
-        @PathVariable Long idProducto) {
-
-    try {
-        Carro carroActualizado = carroService.agregarProductoAlCarro(idCarro, idProducto);
-        return new ResponseEntity<>(carroActualizado, HttpStatus.OK);
-    } catch (Exception e) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarro(@PathVariable Long id) {
 
@@ -79,5 +66,34 @@ public class CarroController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-}
 
+    @PutMapping("/{idCarro}/productos/{idProducto}")
+    public ResponseEntity<Carro> agregarProducto(
+            @PathVariable Long idCarro,
+            @PathVariable Long idProducto) {
+
+        Carro carro = carroService.agregarProducto(idCarro, idProducto);
+
+        if (carro == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(carro, HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/{idCarro}/productos/{idProducto}")
+    public ResponseEntity<Carro> eliminarProducto(
+            @PathVariable Long idCarro,
+            @PathVariable Long idProducto) {
+
+        Carro carro = carroService.eliminarProducto(idCarro, idProducto);
+
+        if (carro == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(carro, HttpStatus.OK);
+
+    }
+}

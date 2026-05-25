@@ -1,10 +1,10 @@
 package ecoMarket.carro_microservicio.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import ecoMarket.carro_microservicio.model.Carro;
 import ecoMarket.carro_microservicio.model.ProductoDTO;
@@ -19,7 +19,7 @@ public class CarroService {
     private CarroRepository carroRepository;
 
     @Autowired
-    private ProductoClientService productoClientService;
+    private RestTemplate restTemplate;
 
     public Carro save(Carro carro) {
         return carroRepository.save(carro);
@@ -30,40 +30,70 @@ public class CarroService {
     }
 
     public Carro findById(Long id) {
-        return carroRepository.findById(id).orElse(null);
+        return carroRepository.findById(id).get();
     }
 
     public void deleteById(Long id) {
         carroRepository.deleteById(id);
     }
 
-    public Carro agregarProductoAlCarro(Long idCarro, Long idProducto) {
+    public Carro agregarProducto(Long idCarro, Long idProducto) {
+        Carro carro = carroRepository.findById(idCarro).orElse(null);
+        if (carro != null) {
+            String url = "http://localhost:8087/api/v1/productos/" + idProducto;
+            ProductoDTO producto = restTemplate.getForObject(url, ProductoDTO.class);
+            if (producto != null) {
+                carro.getListaProductos().add(producto.getId());
+                carro.setSubtotal(
+                        carro.getSubtotal() + producto.getPrecio());
+
+                int totalConImpuesto = (int) (carro.getSubtotal() * 1.19);
+
+                carro.setTotal(totalConImpuesto);
+                carro.setTotal(
+                        carro.getTotal() + producto.getPrecio());
+                return carroRepository.save(carro);
+            }
+        }
+        return null;
+    }
+
+    public Carro eliminarProducto(Long idCarro, Long idProducto) {
 
         Carro carro = carroRepository.findById(idCarro).orElse(null);
 
-        if (carro == null) {
-            throw new RuntimeException("El carro no existe");
+        if (carro != null) {
+
+            String url = "http://localhost:8087/api/v1/productos/" + idProducto;
+
+            ProductoDTO producto = restTemplate.getForObject(url, ProductoDTO.class);
+
+            if (producto != null) {
+
+                if (carro.getListaProductos().contains(idProducto)) {
+
+                    carro.getListaProductos().remove(Long.valueOf(idProducto));
+
+                    carro.setSubtotal(
+                            carro.getSubtotal() - producto.getPrecio());
+
+                    int totalConImpuesto = (int) (carro.getSubtotal() * 1.19);
+
+                    carro.setTotal(totalConImpuesto);
+
+                    carro.setTotal(
+                            carro.getTotal() - producto.getPrecio());
+
+                    return carroRepository.save(carro);
+
+                }
+
+            }
+
         }
 
-        ProductoDTO producto = productoClientService.obtenerProductoPorId(idProducto);
+        return null;
 
-        if (producto == null) {
-            throw new RuntimeException("El producto no existe");
-        }
-
-        if (producto.getStock_catalogo() <= 0) {
-            throw new RuntimeException("El producto no tiene stock disponible");
-        }
-
-        if (carro.getListaProductos() == null) {
-            carro.setListaProductos(new ArrayList<>());
-        }
-
-        carro.getListaProductos().add(producto.getId());
-
-        carro.setSubtotal(carro.getSubtotal() + producto.getPrecio());
-        carro.setTotal(carro.getSubtotal());
-
-        return carroRepository.save(carro);
     }
+
 }
