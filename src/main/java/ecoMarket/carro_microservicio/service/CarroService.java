@@ -40,7 +40,7 @@ public class CarroService {
     public Carro agregarProducto(Long idCarro, Long idProducto) {
         Carro carro = carroRepository.findById(idCarro).orElse(null);
         if (carro != null) {
-            String url = "http://localhost:8087/api/v1/productos/" + idProducto;
+            String url = "http://localhost:9094/api/v1/productos/" + idProducto;
             ProductoDTO producto = restTemplate.getForObject(url, ProductoDTO.class);
             if (producto != null) {
                 carro.getListaProductos().add(producto.getId());
@@ -50,8 +50,7 @@ public class CarroService {
                 int totalConImpuesto = (int) (carro.getSubtotal() * 1.19);
 
                 carro.setTotal(totalConImpuesto);
-                carro.setTotal(
-                        carro.getTotal() + producto.getPrecio());
+
                 return carroRepository.save(carro);
             }
         }
@@ -64,7 +63,7 @@ public class CarroService {
 
         if (carro != null) {
 
-            String url = "http://localhost:8087/api/v1/productos/" + idProducto;
+            String url = "http://localhost:9094/api/v1/productos/" + idProducto;
 
             ProductoDTO producto = restTemplate.getForObject(url, ProductoDTO.class);
 
@@ -80,9 +79,6 @@ public class CarroService {
                     int totalConImpuesto = (int) (carro.getSubtotal() * 1.19);
 
                     carro.setTotal(totalConImpuesto);
-
-                    carro.setTotal(
-                            carro.getTotal() - producto.getPrecio());
 
                     return carroRepository.save(carro);
 
